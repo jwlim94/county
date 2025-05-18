@@ -1,6 +1,6 @@
 name: county
 description: A Flutter package for retrieving US county and state info including boundary data.
-version: 0.0.1
+version: 0.0.2
 homepage: https://github.com/jwlim94/county
 repository: https://github.com/jwlim94/county
 

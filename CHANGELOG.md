@@ -5,3 +5,7 @@
 - Supports parsing GeoJSON data to extract county boundaries.
 - Includes a `CountyService` to get county and state code from an address.
 - Example app included with Google Maps integration and autocomplete search.
+
+## 0.0.2
+
+- Updated example `pubspect.yaml` to remove duplicated name.
