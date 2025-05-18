@@ -1,0 +1,27 @@
+name: county
+description: An example app for county package
+version: 0.0.1
+homepage: https://github.com/jwlim94/county
+repository: https://github.com/jwlim94/county
+
+publish_to: "none"
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  county:
+    path: ../
+  google_maps_flutter: ^2.12.2
+  latlong2: ^0.9.1
+  google_places_flutter: ^2.1.0
+  flutter_dotenv: ^5.2.1
+dev_dependencies:
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - .env

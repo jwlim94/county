@@ -1,0 +1,24 @@
+name: county
+description: A Flutter package for retrieving US county and state info including boundary data.
+version: 0.0.1
+homepage: https://github.com/jwlim94/county
+repository: https://github.com/jwlim94/county
+
+environment:
+  sdk: ^3.7.2
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  geocoding: ^3.0.0
+  latlong2: ^0.9.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  assets:
+    - assets/us_counties.json

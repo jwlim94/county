@@ -1,0 +1,7 @@
+## 0.0.1
+
+- Initial release of the `county` package.
+- Provides utilities to retrieve US county and state information.
+- Supports parsing GeoJSON data to extract county boundaries.
+- Includes a `CountyService` to get county and state code from an address.
+- Example app included with Google Maps integration and autocomplete search.
