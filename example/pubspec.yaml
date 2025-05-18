@@ -1,10 +1,8 @@
-name: county
+publish_to: none
+
+name: county_example
 description: An example app for county package
 version: 0.0.1
-homepage: https://github.com/jwlim94/county
-repository: https://github.com/jwlim94/county
-
-publish_to: "none"
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
