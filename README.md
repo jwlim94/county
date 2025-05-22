@@ -1,11 +1,12 @@
 # county
 
-`county` is a Flutter package that provides utilities to retrieve U.S. county and state information, including the ability to extract county boundary data which can be visualized using Google Maps.
+`county` is a Flutter package that helps you retrieve U.S. county and state information, including boundaries and geographic centroids for map visualization.
 
 ## Features
 
 - Get the county name and state code from a user-provided address
 - Retrieve boundary coordinates for a given county
+- Get the geographic center (centroid) of any county
 - Works for both iOS and Android
 - No native setup required
 
@@ -69,12 +70,18 @@ if (result.county != null && result.stateCode != null) {
     stateCode: result.stateCode!,
   );
 
-  // Use boundary (List<LatLng>) to draw on Google Maps
+  final centroid = await service.getCountyCentroid(
+    stateCode: result.stateCode!,
+    countyName: result.county!,
+  );
+
+  // Use boundary (List<LatLng>) and centroid (LatLng) to draw on Google Maps
 }
 ```
 
 ## Additional Information
 
 - County boundaries are based on a static `us_counties.json` file included in the package.
+- County centroids are retrieved from the `us_counties_centroids.json` file.
 - Contributions welcome via GitHub.
 - Please file issues if you encounter problems or want to request features.

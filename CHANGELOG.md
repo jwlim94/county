@@ -9,3 +9,9 @@
 ## 0.0.2
 
 - Updated example `pubspect.yaml` to remove duplicated name.
+
+## 0.1.0
+
+- Added `getCountyCentroid()` to retrieve the geographic center (LatLng) of a county.
+- Fixed logic for parsing MultiPolygon county boundaries from GeoJSON data.
+- Updated README to reflect new functionality

@@ -37,6 +37,8 @@ class _CountyLookupPageState extends State<CountyLookupPage> {
   String? stateCode;
   List<latlong.LatLng> boundary = [];
   GoogleMapController? mapController;
+  LatLng? centroid;
+  Set<Marker> markers = {};
 
   Future<void> _lookupCountyFromAddress(String address) async {
     final service = CountyService();
@@ -56,10 +58,27 @@ class _CountyLookupPageState extends State<CountyLookupPage> {
       stateCode: result.stateCode!,
     );
 
+    final centroidResult = await service.getCountyCentroid(
+      stateCode: result.stateCode!,
+      countyName: result.county!,
+    );
+
     setState(() {
       countyName = result.county;
       stateCode = result.stateCode;
       boundary = boundaryResult;
+      centroid = centroidResult;
+
+      markers = {
+        if (centroid != null)
+          Marker(
+            markerId: MarkerId('county_center'),
+            position: centroid!,
+            infoWindow: InfoWindow(
+              title: '$countyName Center',
+            ),
+          ),
+      };
     });
 
     if (mapController != null && boundary.isNotEmpty) {
@@ -125,6 +144,13 @@ class _CountyLookupPageState extends State<CountyLookupPage> {
                 ),
                 const SizedBox(height: 8),
                 if (countyName != null) Text('County: $countyName'),
+                if (centroid != null)
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Text(
+                      'Center(lat, lng): (${centroid!.latitude}, ${centroid!.longitude})',
+                    ),
+                  ),
               ],
             ),
           ),
@@ -135,6 +161,7 @@ class _CountyLookupPageState extends State<CountyLookupPage> {
                 target: LatLng(40.4, -111.9),
                 zoom: 8,
               ),
+              markers: markers,
               polygons: boundary.isNotEmpty
                   ? {
                       Polygon(

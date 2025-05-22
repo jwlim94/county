@@ -4,9 +4,12 @@ import 'package:county/src/county_util.dart';
 import 'package:county/src/file_reader.dart';
 import 'package:flutter/rendering.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:latlong2/latlong.dart';
+import 'package:latlong2/latlong.dart' as latlong;
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class CountyService {
+  Map<String, dynamic>? _countyCentroids;
+
   /// Returns the county name for a given address
   Future<String?> getCountyFromAddress(String address) async {
     try {
@@ -52,7 +55,7 @@ class CountyService {
   }
 
   /// Returns the bounday coordinates for a specific county name and state code
-  Future<List<LatLng>> getBoundaryForCounty({
+  Future<List<latlong.LatLng>> getBoundaryForCounty({
     required String county,
     required String stateCode,
   }) async {
@@ -88,20 +91,56 @@ class CountyService {
     final type = geometry['type'];
     final coordinates = geometry['coordinates'];
 
-    // Return polygon or multipolygon coordinates (first ring only)
+    // Return polygon or multipolygon coordinates
     if (type == 'Polygon') {
-      return _extractPolygon(coordinates[0]); // Only outer ring
+      return _extractPolygon(coordinates[0]);
     } else if (type == 'MultiPolygon') {
-      return _extractPolygon(coordinates[0][0]); // First polygon's outer ring
+      final multi = _extractPolygonsFromMultiPolygon(coordinates);
+      return multi.expand((polygon) => polygon).toList();
     } else {
       return [];
     }
   }
 
+  /// Returns the centroid (LatLng) of a given county
+  Future<LatLng?> getCountyCentroid({
+    required String stateCode,
+    required String countyName,
+  }) async {
+    final key = '${stateCode}_$countyName';
+
+    _countyCentroids ??= await _loadCountyCentroids();
+
+    final data = _countyCentroids![key];
+    if (data == null) return null;
+
+    return LatLng(data['lat'], data['lng']);
+  }
+
   /// PRIVATE
 
-  /// Convert raw coordinates into a list of LatLng
-  List<LatLng> _extractPolygon(List coords) {
-    return coords.map<LatLng>((p) => LatLng(p[1], p[0])).toList();
+  /// Converts a single polygon's raw coordinate list to a list of LatLng
+  List<latlong.LatLng> _extractPolygon(List coords) {
+    return coords
+        .map<latlong.LatLng>((p) => latlong.LatLng(p[1], p[0]))
+        .toList();
+  }
+
+  /// Converts a MultiPolygon's raw coordinates to a list of LatLng lists
+  List<List<latlong.LatLng>> _extractPolygonsFromMultiPolygon(
+    List multiCoords,
+  ) {
+    return multiCoords.map<List<latlong.LatLng>>((polygonCoords) {
+      return polygonCoords[0]
+          .map<latlong.LatLng>((p) => latlong.LatLng(p[1], p[0]))
+          .toList();
+    }).toList();
+  }
+
+  /// Loads county centroid data from a local JSON asset file
+  Future<Map<String, dynamic>> _loadCountyCentroids() async {
+    String path = 'packages/county/assets/us_counties_centroids.json';
+    final rawJson = await FileReader.readStringFromFile(path);
+    return json.decode(rawJson) as Map<String, dynamic>;
   }
 }
